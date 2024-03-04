@@ -1,0 +1,27 @@
+---
+- name: Enable IP forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+    reload: true
+
+- name: Add IP address to network interface
+  become: true
+  ansible.builtin.command: ip a add {{ net1_ip }}/{{ net1_subnet }} dev eth2
+
+- name: Set interface up
+  become: true
+  ansible.builtin.command: ip l set eth2 up
+
+- name: Add IP address to network interface
+  become: true
+  ansible.builtin.command: ip a add {{ net2_ip }}/{{ net2_subnet }} dev eth3
+
+- name: Set interface up
+  become: true
+  ansible.builtin.command: ip l set eth3 up
+
+- name: Add route to other network
+  become: true
+  ansible.builtin.command: ip r add {{ route_net }}/24 via {{ gateway }} dev eth3

@@ -1,0 +1,12 @@
+---
+- name: Add IP address to network interface
+  become: true
+  ansible.builtin.command: ip a add 192.168.100.2/24 dev eth1
+
+- name: Set interface up
+  become: true
+  ansible.builtin.command: ip l set eth1 up
+
+- name: Add route to other network 
+  become: true
+  ansible.builtin.command: ip r add 192.168.300.0/24 via 192.168.100.1 dev eth1

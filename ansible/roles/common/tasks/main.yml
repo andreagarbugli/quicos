@@ -1,0 +1,12 @@
+---
+- name: Install required system packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - python3-pip
+    # - python3-venv
+    # - network-manager    
+    # - python3-dbus # required for nmcli
+    # - libnm-dev # required for nmcli

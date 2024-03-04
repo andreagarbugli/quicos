@@ -1,0 +1,67 @@
+#   OpenBACH is a generic testbed able to control/configure multiple
+#   network/physical entities (under test) and collect data from them. It is
+#   composed of an Auditorium (HMIs), a Controller, a Collector and multiple
+#   Agents (one for each network entity that wants to be tested).
+#   
+#   
+#   Copyright © 2016-2023 CNES
+#   
+#   
+#   This file is part of the OpenBACH testbed.
+#   
+#   
+#   OpenBACH is a free software : you can redistribute it and/or modify it under
+#   the terms of the GNU General Public License as published by the Free Software
+#   Foundation, either version 3 of the License, or (at your option) any later
+#   version.
+#   
+#   This program is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY, without even the implied warranty of MERCHANTABILITY or FITNESS
+#   FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+#   details.
+#   
+#   You should have received a copy of the GNU General Public License along with
+#   this program. If not, see http://www.gnu.org/licenses/.
+
+---
+
+- name: Display various values regarding the machine
+  debug:
+    msg: |
+      Total disk: {{ disk_total }} (needed: {{ required_disk }})
+      Available disk: {{ disk_available }} (needed: {{ required_disk }})
+      RAM: {{ ram }} (needed: {{ required_ram }})
+      CPU: {{ cpu }} (needed: {{ required_cpu }})
+      IPv4: {{ ipv4 }}
+      IPv6: {{ ipv6 }}
+  vars:
+    disk_available: "{{ ((ansible_mounts | first)['size_available'] | int / 1000000000) | round(2, 'common') }}"
+    disk_total: "{{ ((ansible_mounts | first)['size_total'] | int / 1000000000) | round(2, 'common') }}"
+    ram: "{{ (ansible_memory_mb.real.total | int / 1000) | round(1, 'ceil') }}"
+    cpu: "{{ ansible_facts.processor_vcpus | int }}"
+    ipv4: "{{ ansible_facts.default_ipv4 }}"
+    ipv6: "{{ ansible_facts.default_ipv6 }}"
+    required_disk: "{{ controller_disk if inventory_hostname in groups.controller else agent_disk }}"
+    required_ram: "{{ controller_ram if inventory_hostname in groups.controller else agent_ram }}"
+    required_cpu: "{{ controller_cpu if inventory_hostname in groups.controller else agent_cpu }}"
+
+- name: Ensure the machine meets the requirements
+  fail:
+    msg: >
+      Installation aborted because your machine does not meet the required resources capabilities.
+
+      To avoid this check, you can restart the playbook using the '--skip-tags check_resources' flag.
+  when: (disk_total < required_disk) or
+        (ram < required_ram) or
+        (cpu < required_cpu) or
+        ((ipv4.type | default('wifi')) == 'wifi' and (ipv6.type | default('wifi')) == 'wifi')
+  vars:
+    disk_available: "{{ ((ansible_mounts | first)['size_available'] | int / 1000000000) | round(2, 'common') }}"
+    disk_total: "{{ ((ansible_mounts | first)['size_total'] | int / 1000000000) | round(2, 'common') }}"
+    ram: "{{ (ansible_memory_mb.real.total|int / 1000) | round(1, 'ceil') }}"
+    cpu: "{{ ansible_facts.processor_vcpus }}"
+    ipv4: "{{ ansible_facts.default_ipv4 }}"
+    ipv6: "{{ ansible_facts.default_ipv6 }}"
+    required_disk: "{{ controller_disk if inventory_hostname in groups.controller else agent_disk }}"
+    required_ram: "{{ controller_ram if inventory_hostname in groups.controller else agent_ram }}"
+    required_cpu: "{{ controller_cpu if inventory_hostname in groups.controller else agent_cpu }}"

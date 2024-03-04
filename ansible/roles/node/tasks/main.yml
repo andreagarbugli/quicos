@@ -1,0 +1,24 @@
+---
+- name: Check if the interface has an IP address
+  ansible.builtin.shell: ip a show dev eth2 | grep {{ net_ip }}
+  register: interface_status
+  ignore_errors: true
+
+- name: Add IP address to network interface
+  become: true
+  ansible.builtin.command: ip a add {{ net_ip }}/{{ net_subnet }} dev eth2
+  when: interface_status.rc != 0
+
+- name: Set interface up
+  become: true
+  ansible.builtin.command: ip l set eth2 up
+
+- name: Check if the route to the other network exists
+  ansible.builtin.shell: ip r show | grep {{ route_net }}
+  register: route
+  ignore_errors: true
+
+- name: Add route to other network
+  become: true
+  ansible.builtin.command: ip r add {{ route_net }}/24 via {{ gateway }} dev eth2
+  when: route.rc != 0
