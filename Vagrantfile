@@ -21,8 +21,8 @@ Vagrant.configure("2") do |config|
             # node.ssh.private_key_path = SSH_KEY
             node.vm.provider "libvirt" do |v|
                 v.memory = 2048
-                v.cpus = 2
-                # v.storage :file, size: "20G"
+                v.cpus = 1
+                v.storage :file, size: "20G"
             end
             node.vm.network "private_network", ip: "192.168.50.#{name == "r1" ? 2 : 3}"
             node.vm.network "private_network", ip: "10.0.1.2", network: "10.0.1.0/24", dhcp_enabled: false, auto_config: false
@@ -44,12 +44,14 @@ Vagrant.configure("2") do |config|
             # node.ssh.private_key_path = SSH_KEY
             node.vm.provider "libvirt" do |v|
                 # if name == "c1" 1024 else 4096
-                if name == "c1"
+                if name == "s1"
                     v.memory = 2048
-                    v.cpus = 2
+                    v.cpus = 1
+                    v.storage :file, size: "15G"
                 else
                     v.memory = 4096
                     v.cpus = 4
+                    v.storage :file, size: "40G"
                 end
             end
             node.vm.network "private_network", ip: "192.168.50.#{name == "c1" ? 10 : 11}"

@@ -1,0 +1,11 @@
+[controller]
+192.168.50.10
+
+[agent]
+192.168.50.2
+192.168.50.3
+192.168.50.10
+192.168.50.11
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

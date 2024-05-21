@@ -17,8 +17,9 @@ The project is divided into the following directories and files:
 
 - `Vagrantfile`: Contains the definition of the testbed, including the virtual machines and the network configuration
 - `ansible`: Contains the Ansible playbooks to provision the virtual machines
+- `ansible-openbach`: Contains the Ansible inventory for OpenBACH
 - `openbach`: Contains the OpenBACH software to run the experiment
-- `setup_ssh.sh`: A script to setup the SSH keys to access the virtual machines
+- `quicos.sh`: Script with some useful commands to run the testbed
 
 ## Setup the testbed
 
@@ -50,24 +51,37 @@ vagrant ssh <machine>
 
 Where `<machine>` is the name of the virtual machine. The names of the virtual machines are defined in the `Vagrantfile`.
 
-### OpenBACH Installation
-
-To install OpenBACH, we first need to add an SSH key to the virtual machines. We can do this with the following command:
+Alternatively, we can use the `quicos.sh` script to run the commands. For example, to start the virtual machines, we can run the following command:
 
 ```bash
-./setup_ssh.sh
+./quicos.sh init
 ```
 
-Then, we have to move to the `openbach/ansible`.
+### OpenBACH Installation
 
 We can test if ansible can access the virtual machines with the following command:
 
 ```bash
-ansible -i inventory/inventory -u vagrant -K -m ping all --private-key ~/.ssh/id_rsa --ssh-extra-args="-o UserKnownHostsFile=../../configs/ssh/known_hosts"
+ansible -i ansible-openbach/inventory/inventory -u vagrant -K -m ping all \ 
+    --private-key ~/.ssh/id_rsa \
+    --ssh-extra-args="-o UserKnownHostsFile=./configs/ssh/known_hosts"
 ```
 
-If the command returns `pong` for all the virtual machines, we can proceed with the installation of OpenBACH:
+If the command returns `pong` for all the virtual machines, we can proceed with the installation of OpenBACH. 
+
+To install OpenBACH, we can have two options:
+
+1. Do `cd openbach/ansible` and run the following command:
 
 ```bash
-ansible-playbook -i inventory/inventory install.yml -u vagrant -K --private-key ~/.ssh/id_rsa --ssh-extra-args="-o UserKnownHostsFile=../../configs/ssh/known_hosts"
+ansible-playbook -i ../../ansible-openbach/inventory/inventory install.yml \
+    -u vagrant -K --skip-tags check_resources \
+    --private-key ~/.ssh/id_rsa \
+    --ssh-extra-args="-o UserKnownHostsFile=../../configs/ssh/known_hosts"
+```
+
+2. Use the `quicos.sh` script:
+
+```bash
+./quicos.sh install
 ```
