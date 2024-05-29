@@ -1,0 +1,13 @@
+=== Examples ===
+
+== Example 1 ==
+
+Launch navigation and visit each web page during 5 seconds.
+
+In the web interface, set the following parameters:
+  * **page_visit_duration** = 5
+
+Or launch the job manually from the Agent as follows:
+<code>
+JOB_NAME=random_web_browsing_qoe sudo -H python3 /opt/openbach/agent/jobs/random_web_browsing_qoe/random_web_browsing_qoe.py 5
+</code>

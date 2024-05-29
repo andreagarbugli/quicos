@@ -1,0 +1,15 @@
+=== Examples ===
+
+== Example 1 ==
+
+From a given Agent plays a youtube video of the quality 'medium', during 60 seconds.
+ 
+In the web interface, set the following parameters:
+
+  * **duration** = 60
+  * **video_quality** = medium
+    
+Or launch the job manually from the Agents as follows:
+<code>
+JOB_NAME=youtube sudo -E -u openbach python3 /opt/openbach/agent/jobs/youtube/youtube.py 60 -vq medium
+</code>

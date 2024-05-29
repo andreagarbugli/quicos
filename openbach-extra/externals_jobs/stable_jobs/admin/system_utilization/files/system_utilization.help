@@ -1,0 +1,16 @@
+=== Job description ===
+This job gets system's ressources utilization every *interval*.
+
+=== Examples ===
+
+== Example 1 ==
+
+Every 2s, show how much processing power and memory are being used on the system running a given Agent.
+
+In the web interface, for the agent to monitor, set the following parameters:
+  * **interval** = 2
+
+Or launch the job manually from the Agent as follows:
+<code>
+JOB_NAME=system_utilization sudo -E python3 /opt/openbach/agent/jobs/system_utilization/system_utilization.py -i 2
+</code>

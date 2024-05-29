@@ -1,0 +1,152 @@
+---
+
+general:
+  name:            nuttcp
+  description: >
+      This Job launches the nuttcp tool (client or server mode) to generate UDP/TCP traffic with configured parameters (duration, bandwidth, parallel flows, ToS, MSS, etc.). It measures throughput, sent/lost packets, etc.  
+  job_version:     '2.2'
+  keywords:        [nuttcp, udp, tcp, throughput, loss]
+  persistent:      True
+  need_privileges: True
+
+platform_configuration:
+  - ansible_system: 'Debian'
+    ansible_distribution: 'Ubuntu'
+    ansible_distribution_version: '20.04'
+    command: '/usr/bin/env python3 /opt/openbach/agent/jobs/nuttcp/nuttcp.py'
+    command_stop:
+  - ansible_system: 'Debian'
+    ansible_distribution: 'Ubuntu'
+    ansible_distribution_version: '22.04'
+    command: '/usr/bin/env python3 /opt/openbach/agent/jobs/nuttcp/nuttcp.py'
+    command_stop:
+
+arguments:
+  required:
+  optional:
+    - name:        command_port
+      type:        'int'
+      count:       1
+      flag:        '-P'
+      description: >
+          Set port number for control connection (default 5000)
+  subcommand:
+    - group_name:        mode
+      choices:
+        - name:        server      
+          required:
+          optional:
+        - name:        client
+          required:      
+            - name:        server_ip
+              type:        'str'
+              count:       1
+              flag:        '-i'
+              description: >
+                  Server IP address
+          optional:
+            - name:        port
+              type:        'int'
+              count:       1
+              flag:        '-p'
+              description: >
+                  Set server port for the data transmission (default 5001)
+            - name:        receiver
+              type:        'None'
+              count:       0
+              flag:        '-R'
+              description: >
+                  Launch client as receiver (else, by default the client is the transmitter)
+            - name:        dscp
+              type:        'str'
+              count:       1
+              flag:        '-c'
+              description: >
+                  The DSCP value on data streams (t|T suffix for full TOS field).
+            - name:        n_streams
+              type:        'int'
+              count:       1
+              flag:        '-n'
+              description: >
+                  The number of parallel flows (default 1 flow).
+            - name:        duration
+              type:        'int'
+              count:       1
+              flag:        '-d'
+              description: >
+                  The duration of the transmission (default: 10s).
+            - name:        rate_limit
+              type:        'str'
+              count:       1
+              flag:        '-r'
+              description: >
+                  The transmit rate limit in Kbps or Mbps (add m suffix) or Gbps (add g)  or bps (add p). Example: 10m sends data at 10Mbps rate.
+            - name:        stats_interval
+              type:        'float'
+              count:       1
+              flag:        '-I'
+              description: >
+                  Interval (seconds) between periodic collected statistics (default 1 sec).
+          subcommand:
+            - group_name:        protocol
+              choices:
+                - name:         udp
+                  required:
+                  optional:
+                - name:         tcp
+                  required:
+                  optional:
+                    - name:        buffer_size
+                      type:        'int'
+                      count:       1
+                      flag:        '-b'
+                      description: >
+                          The receiver and transmitter TCP buffer size (then effectively sets the window size)
+                    - name:        mss
+                      type:        'int'
+                      count:       1
+                      flag:        '-m'
+                      description: >
+                          The MSS for TCP data connection.
+                                
+statistics:
+    - name: data_sent
+      description: Data sent (in Bytes)
+      frequency: "Every *interval*"    
+    - name: total_data_sent
+      description: Total data sent (in Bytes)
+      frequency: "Every *interval*"
+    - name: data_loss
+      description: Percentage of data lost
+      frequency: "Every *interval*"
+    - name: total_data_loss
+      description: Percentage of total data lost
+      frequency: "Every *interval*"
+    - name: rate
+      description: The throughput (bits/sec)
+      frequency: "Every *interval*"      
+    - name: retransmissions
+      description: retransmissions
+      frequency: "Every *interval*"      
+    - name: total_retransmissions
+      description: Total retransmissions
+      frequency: "Every *interval*"
+    - name: cwnd
+      description: Congestion Window
+      frequency: "Every *interval*"
+    - name: rtt
+      description: rtt
+      frequency: "Every *interval*"
+    - name: lost_pkts
+      description: Packets lost
+      frequency: "Every *interval*"
+    - name: total_lost_pkts
+      description: Total packets lost
+      frequency: "Every *interval*"
+    - name: sent_pkts
+      description: Packets sent
+      frequency: "Every *interval*"
+    - name: total_sent_pkts
+      description: Total packets sent
+      frequency: "Every *interval*"
+
