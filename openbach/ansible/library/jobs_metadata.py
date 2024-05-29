@@ -29,7 +29,10 @@
 import os
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.parsing.yaml.objects import yaml
+import yaml
+# from ansible.parsing.yaml.objects import yaml
+
+
 
 
 ANSIBLE_METADATA = {
