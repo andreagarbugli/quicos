@@ -13,10 +13,8 @@ custom_known_hosts_file=./configs/ssh/known_hosts
 become_password=$BP
 
 init() {
-    # check if vagrant already up  
-    if [ -d ".vagrant" ]; then
-        echo "Vagrant is already up. Please use 'deinit' command to deinitialize the VMs."
-        exit 1
+    if [ ! -d "./configs/ssh" ]; then
+        mkdir -p ./configs/ssh
     fi
 
     vagrant up
@@ -32,6 +30,8 @@ init() {
 
 deinit() {
     vagrant destroy -f
+    rm -rf ./configs/ssh
+    rm -rf .vagrant 
 }
 
 tmux_create_session() {
@@ -84,13 +84,28 @@ tmux_destroy_session() {
 install_openback() {
     cd openbach/ansible
     # ansible-playbook -i ../../ansible-openbach/inventory/inventory install.yml --skip-tags check_resources -u vagrant -K --private-key ~/.ssh/id_rsa --ssh-extra-args="-o UserKnownHostsFile=../../configs/ssh/known_hosts"
-    expect << EOF
-    set timeout -1
-    spawn ansible-playbook -i ../../ansible-openbach/inventory/inventory install.yml --skip-tags check_resources,configure_ntp_server -u vagrant -K --private-key ~/.ssh/id_rsa --ssh-extra-args "-o UserKnownHostsFile=../../configs/ssh/known_hosts"
-    expect "BECOME password:"
-    send "$become_password\r"
-    expect eof
-EOF
+    # expect << EOF
+    # set timeout -1
+#     spawn 
+#     expect "BECOME password:"
+#     send "$become_password\r"
+#     expect eof
+# EOF
+
+    #    -e '{"openbach_jobs_folders": ["~/openbach_extra/external_jobs/stable_jobs/", "~/jobs_devel/"], "default_jobs": ["iperf", "fping", "socat", "my_brand_new_job", "mptcp", "squid"]}'
+    ansible-playbook -i ../../ansible-openbach/inventory/inventory install.yml               \
+                     -e project_name=quicos-test                                                  \
+                     -e '{"default_jobs": ["iperf"]}' \
+                     --skip-tags check_resources -u vagrant -K          \
+                     --private-key ~/.ssh/id_rsa                                             \
+                     --ssh-extra-args "-o UserKnownHostsFile=../../configs/ssh/known_hosts"
+
+    cd ../..
+}
+
+uninstall_openback() {
+    cd openbach/ansible
+    ansible-playbook -i ../../ansible-openbach/inventory/inventory uninstall.yml -u vagrant -K --private-key ~/.ssh/id_rsa --ssh-extra-args="-o UserKnownHostsFile=../../configs/ssh/known_hosts"
     cd ../..
 }
 
@@ -117,6 +132,9 @@ case $1 in
         ;;
     i | install)
         install_openback
+        ;;
+    u | uninstall)
+        uninstall_openback
         ;;
     *)
         echo "Usage: $0 {init|deinit|tmux|tmux-attach|tmux-destroy|install}"
