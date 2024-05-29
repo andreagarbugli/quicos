@@ -6,17 +6,21 @@
     state: present
     reload: true
 
-- name: Add IP address to network interface
+- name: Add IP address to network interface eth2
   become: true
   ansible.builtin.command: ip a add {{ net1_ip }}/{{ net1_subnet }} dev eth2
+  # if fails continue with the next task, the interface is already configured
+  ignore_errors: yes
 
 - name: Set interface up
   become: true
   ansible.builtin.command: ip l set eth2 up
 
-- name: Add IP address to network interface
+- name: Add IP address to network interface eth3
   become: true
   ansible.builtin.command: ip a add {{ net2_ip }}/{{ net2_subnet }} dev eth3
+  # if fails continue with the next task, the interface is already configured
+  ignore_errors: yes
 
 - name: Set interface up
   become: true
@@ -25,3 +29,5 @@
 - name: Add route to other network
   become: true
   ansible.builtin.command: ip r add {{ route_net }}/24 via {{ gateway }} dev eth3
+  # if fails continue with the next task, the route is already configured
+  ignore_errors: yes
