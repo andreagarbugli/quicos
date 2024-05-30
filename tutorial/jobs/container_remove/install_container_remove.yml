@@ -1,0 +1,9 @@
+- name: Create container_remove repository
+  file: path=/opt/openbach/agent/jobs/container_remove state=directory mode=0755
+
+- name: Install continer_docker Job
+  copy: src=files/{{ item.file }} dest=/opt/openbach/agent/jobs/container_remove/ mode={{ item.mode }}
+  with_items:
+    - { file: 'container_remove.py', mode: '0755' }
+    - { file: 'container_remove.help', mode: '0644' }
+    - { file: 'container_remove_rstat_filter.conf', mode: '0644' }

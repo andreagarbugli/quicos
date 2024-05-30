@@ -1,0 +1,9 @@
+- name: Create container_installer repository
+  file: path=/opt/openbach/agent/jobs/container_installer state=directory mode=0755
+
+- name: Install container_installer Job
+  copy: src=files/{{ item.file }} dest=/opt/openbach/agent/jobs/container_installer/ mode={{ item.mode }}
+  with_items:
+    - { file: 'container_installer.py', mode: '0755' }
+    - { file: 'container_installer.help', mode: '0644' }
+    - { file: 'container_installer_rstat_filter.conf', mode: '0644' }

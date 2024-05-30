@@ -1,0 +1,9 @@
+- name: Create container_run_client repository
+  file: path=/opt/openbach/agent/jobs/container_run_client state=directory mode=0755
+
+- name: Install container_docker Job
+  copy: src=files/{{ item.file }} dest=/opt/openbach/agent/jobs/container_run_client/ mode={{ item.mode }}
+  with_items:
+    - { file: 'container_run_client.py', mode: '0755' }
+    - { file: 'container_run_client.help', mode: '0644' }
+    - { file: 'container_run_client_rstat_filter.conf', mode: '0644' }

@@ -1,0 +1,9 @@
+- name: Create container_run repository
+  file: path=/opt/openbach/agent/jobs/container_run state=directory mode=0755
+
+- name: Install continer_docker Job
+  copy: src=files/{{ item.file }} dest=/opt/openbach/agent/jobs/container_run/ mode={{ item.mode }}
+  with_items:
+    - { file: 'container_run.py', mode: '0755' }
+    - { file: 'container_run.help', mode: '0644' }
+    - { file: 'container_run_rstat_filter.conf', mode: '0644' }

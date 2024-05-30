@@ -1,0 +1,2 @@
+- name: Uninstall container_remove Job
+  file: path=/opt/openbach/agent/jobs/container_remove state=absent

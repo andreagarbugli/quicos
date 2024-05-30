@@ -1,0 +1,53 @@
+---
+
+general:
+  name:            container_run_client
+  description: >
+      This job runs the container, issuing the specified command
+  job_version:     '0.1'
+  keywords:        [docker, image, run, container]
+  persistent:      False
+  need_privileges: False
+
+platform_configuration:
+  - ansible_system: 'Debian'
+    ansible_distribution: 'Ubuntu'
+    ansible_distribution_version: '20.04'
+    command: '/usr/bin/env python3 /opt/openbach/agent/jobs/container_run_client/container_run_client.py'
+    command_stop:
+
+arguments:
+  required:
+    - name: docker_image
+      type: 'str'
+      count: 1
+      description: Name of the docker image to run.
+  optional:
+    - name: name
+      type: 'str'
+      count: 1
+      flag: '-n'
+      description: Name to assign to the container.
+    - name: command
+      type: 'str'
+      count: 1
+      flag: '-c'
+      description: Command to run inside the container.
+    - name: port
+      type: 'str'
+      count: 1
+      flag: '-p'
+      description: List of comma separated ports to bind.
+    - name: metrics
+      type: 'str'
+      count: 1
+      flag: '-m'
+      description: Docker container port where to listen to metrics.
+
+statistics:
+  - name: ping
+    description: Number received by the C/S.
+    frequency: every 2 second
+  - name: stat2
+    description: Random value between 6 and 9.
+    frequency: every 2 second

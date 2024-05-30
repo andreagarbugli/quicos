@@ -1,0 +1,45 @@
+---
+
+general:
+  name:            container_installer
+  description: >
+      This Job pulls a docker image either from the public registry or a private one.
+  job_version:     '1.0'
+  keywords:        [docker, image, pull, container]
+  persistent:      False
+  need_privileges: False
+
+platform_configuration:
+  - ansible_system: 'Debian'
+    ansible_distribution: 'Ubuntu'
+    ansible_distribution_version: '20.04'
+    command: '/usr/bin/env python3 /opt/openbach/agent/jobs/container_installer/container_installer.py'
+    command_stop:
+
+arguments:
+  required:
+    - name: docker_repo
+      type: 'str'
+      count: 1
+      description: Name of the docker image.
+  optional:
+    - name: tag
+      type: 'str'
+      count: 1
+      flag: '-t'
+      description: Tag of the docker image.
+    - name: registry
+      type: 'str'
+      count: 1
+      flag: '-r'
+      description: URL of the private registry (without protocol, but path to image included).
+    - name: username
+      type: 'str'
+      count: 1
+      flag: '-u'
+      description: Username to access the private repository.
+    - name: password
+      type: 'str'
+      count: 1
+      flag: '-p'
+      description: Password to access the private repository.

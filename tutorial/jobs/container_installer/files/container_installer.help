@@ -1,0 +1,7 @@
+The job installs the specified docker image, using the specified tag (optional, otherwise latest).
+It's possible to retrieve the image from a private registry, by specifying: 
+    - URL of the private repository (without the protocol, but including the path to the image folder);
+    - Username to access the private registry;
+    - Password to access the private registry.
+
+You need all 3 parameters to be allowed to pull from a private registry, otherwise it will try to pull from public Docker Hub.
