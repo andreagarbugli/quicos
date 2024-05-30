@@ -6,11 +6,6 @@ USER = "vagrant"
 PASSWORD = "vagrant"
 SSH_KEY="~/.ssh/id_rsa.pub"
 
-$common_script = <<-'SCRIPT'
-apt-get update
-apt-get -y install python3-venv python3-pip traceroute net-tools 
-SCRIPT
-
 Vagrant.configure("2") do |config|
     config.vm.box = IMAGE_NAME    
 
@@ -65,19 +60,4 @@ Vagrant.configure("2") do |config|
             end
         end
     end
-
-    # config.vm.define "s1" do |s|
-    #     s.vm.hostname = "s1"
-    #     s.vm.provider "libvirt" do |v|
-    #     end
-    #     s.vm.network "private_network", ip: "
-    #     s.vm.network "private_network", ip: "10.0.1.2", network: "10.0.1.0/24", dhcp_enabled: false, auto_config: false
-    #     s.vm.provision "ansible" do |ansible|
-    #         ansible.playbook = "ansible/playbook.yml"
-    #         ansible.compatibility_mode = "2.0"
-    #         ansible.extra_vars = {
-    #             user: USER,
-    #         }
-    #     end
-    # end
 end

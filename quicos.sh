@@ -5,9 +5,8 @@ r1="192.168.50.2"
 r2="192.168.50.3"
 c1="192.168.50.10"
 s1="192.168.50.11"
-vms=($r1 $r2 $c1 $s1)
+vms=("$r1" "$r2" "$c1" "$s1")
 session_name="quicos-testbed"
-command="a"
 custom_known_hosts_file=./configs/ssh/known_hosts
 # get the password from the environment variable BP
 become_password=$BP
@@ -94,9 +93,10 @@ install_openback() {
 
     #    -e '{"openbach_jobs_folders": ["~/openbach_extra/external_jobs/stable_jobs/", "~/jobs_devel/"], "default_jobs": ["iperf", "fping", "socat", "my_brand_new_job", "mptcp", "squid"]}'
     ansible-playbook -i ../../ansible-openbach/inventory/inventory install.yml               \
+                     -K  \
+                     -e '{"openbach_jobs_folders": ["../../tutorial/jobs/"], "default_jobs": ["iperf"]}' \
                      -e project_name=quicos-test                                                  \
-                     -e '{"default_jobs": ["iperf"]}' \
-                     --skip-tags check_resources -u vagrant -K          \
+                     --skip-tags check_resources,configure_ntp_server -u vagrant -K          \
                      --private-key ~/.ssh/id_rsa                                             \
                      --ssh-extra-args "-o UserKnownHostsFile=../../configs/ssh/known_hosts"
 
