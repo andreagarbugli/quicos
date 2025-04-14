@@ -5,7 +5,7 @@ r1="192.168.50.2"
 r2="192.168.50.3"
 c1="192.168.50.10"
 s1="192.168.50.11"
-vms=("$r1" "$r2" "$c1" "$s1")
+vms=("$r1" "$r2", "$bond", "$sat", "$c1" "$s1")
 session_name="quicos-testbed"
 custom_known_hosts_file=./configs/ssh/known_hosts
 # get the password from the environment variable BP

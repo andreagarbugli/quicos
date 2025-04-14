@@ -28,6 +28,30 @@
 
 - name: Add route to other network
   become: true
-  ansible.builtin.command: ip r add {{ route_net }}/24 via {{ gateway }} dev eth3
+  ansible.builtin.command: ip r add {{ route_net }}/24 via {{ gateway }}
   # if fails continue with the next task, the route is already configured
   ignore_errors: yes
+
+# eth4 tasks only if net3_* variables are defined
+- name: Add IP address to network interface eth4
+  become: true
+  ansible.builtin.command: ip a add {{ net3_ip }}/{{ net3_subnet }} dev eth4
+  ignore_errors: yes
+  when: net3_ip is defined and net3_subnet is defined
+
+- name: Set interface eth4 up
+  become: true
+  ansible.builtin.command: ip l set eth4 up
+  when: net3_ip is defined and net3_subnet is defined
+
+- name: Add route to other network via eth4
+  become: true
+  ansible.builtin.command: ip r add {{ route_net2 }}/24 via {{ gateway2 }}
+  ignore_errors: yes
+  when: route_net2 is defined and gateway2 is defined and net3_ip is defined and net3_subnet is defined
+
+- name: Add route to network 10.0.10.0/24 
+  become: true
+  ansible.builtin.command: ip r add {{ route_net3 }}/24 via {{ gateway3 }}
+  ignore_errors: yes
+  when: route_net3 is defined and gateway3 is defined
